@@ -1,1 +1,1 @@
-# heybox_teamdata-proxy-svc
+# heybox-teamdata-proxy-svc
