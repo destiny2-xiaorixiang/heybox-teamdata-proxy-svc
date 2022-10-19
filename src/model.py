@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class ProxyModel(BaseModel):
     ip: str
     port: str
+    duration: int
     create_time: datetime
     expire_time: datetime
 
@@ -20,11 +21,15 @@ class ProxyModel(BaseModel):
 class GroupData(BaseModel):
     context: str
     bungie_id: str
-    user_id: str
+    link_id: int
+    user_id: int
     create_time: datetime
 
     def __hash__(self):
-        return int(self.create_time.timestamp())
+        return self.link_id
+
+    def __eq__(self, other: "GroupData"):
+        return isinstance(other, self.__class__) and self.link_id == other.link_id
 
     def to_dict(self) -> dict:
         return {
