@@ -146,10 +146,13 @@ class FireteamHelper:
             *[
                 cls.fetch_fireteam_data(offset=OFFSET_NUM * rate)
                 for rate in range(OFFSET_TIMES)
-            ]
+            ],
+            return_exceptions=True,
         )
         print(round(time.time() - start_time, 2))
-        group_set: set[GroupData] = set(chain(*data))
+        group_set: set[GroupData] = set(
+            [i for i in chain(*data) if not isinstance(i, Exception)]
+        )
 
         groups = group_set - cls.history_group_set
 
