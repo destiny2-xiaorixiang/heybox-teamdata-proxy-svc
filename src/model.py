@@ -26,7 +26,7 @@ class GroupData(BaseModel):
     create_time: datetime
 
     def __hash__(self):
-        return self.link_id
+        return self.user_id
 
     def __eq__(self, other: "GroupData"):
         return isinstance(other, self.__class__) and self.link_id == other.link_id
