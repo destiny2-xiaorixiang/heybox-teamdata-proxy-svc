@@ -27,7 +27,10 @@ class IpProxyManager:
     @classmethod
     async def run(cls):
         while True:
-            await cls.fetch_new_proxy()
+            try:
+                await cls.fetch_new_proxy()
+            except Exception as e:
+                ...
             await asyncio.sleep(FETCH_PROXY_RATE)
 
     @classmethod
@@ -75,7 +78,10 @@ class FireteamHelper:
     @classmethod
     async def run(cls):
         while True:
-            await cls.put_fireteam_data()
+            try:
+                await cls.put_fireteam_data()
+            except Exception as e:
+                ...
             await asyncio.sleep(POST_FIRETEAM_RATE)
 
     @classmethod
