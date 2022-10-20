@@ -110,16 +110,26 @@ class FireteamHelper:
             raise e
 
         resp = []
+        expire_time = (
+            datetime.datetime.now(tz=datetime.timezone.utc) - HISTORY_EXPIRE_DURATION
+        )
         for team_data in data["result"]["data_list"]:
             context = team_data["team_data"]["team_text"].replace("\n", "")
             bungie_id = team_data["team_data"]["name"]["value"]
+
+            # 如果组队内容和ID为空，忽略处理
             if not (context and bungie_id):
                 continue
+
             if group := re.match("^/[jJ] *(.+)$", bungie_id):
                 bungie_id = group.group(1)
             user_id = team_data["user"]["userid"]
             create_time = team_data["create_at"]
             link_id = team_data["linkid"]
+
+            # 对于发布时间过久的任务，忽略处理
+            if create_time <= expire_time:
+                continue
 
             resp.append(
                 GroupData(
