@@ -6,10 +6,20 @@ from src.manager import FireteamHelper, IpProxyManager
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 if __name__ == "__main__":
+    while True:
+        tasks: list[asyncio.Task] = []
+        try:
 
-    async def main():
-        ip_manager = IpProxyManager()
-        helper = FireteamHelper()
-        await asyncio.gather(ip_manager.run(), helper.run())
+            async def main():
+                ip_manager = IpProxyManager()
+                helper = FireteamHelper()
+                tasks.append(asyncio.create_task(ip_manager.run()))
+                tasks.append(asyncio.create_task(helper.run()))
+                await asyncio.gather(*tasks)
 
-    asyncio.run(main())
+            asyncio.run(main())
+        except Exception as e:
+            for task in tasks:
+                task.cancel()
+            # TODO: 异常处理
+            ...
