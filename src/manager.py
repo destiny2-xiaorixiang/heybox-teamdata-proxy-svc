@@ -16,6 +16,7 @@ from .config import (
     OFFSET_TIMES,
     POST_FIRETEAM_RATE,
     POST_FIRETEAM_URL,
+    REQUEST_TIMEOUT,
     SEMAPHORE_NUM,
 )
 from .model import GroupData, ProxyModel
@@ -95,7 +96,7 @@ class FireteamHelper:
         try:
             async with aiohttp.ClientSession(
                 headers={"Accept": "application/json, text/plain, */*"},
-                timeout=aiohttp.ClientTimeout(5),
+                timeout=REQUEST_TIMEOUT,
             ) as session:
 
                 async with session.get(
@@ -162,7 +163,7 @@ class FireteamHelper:
 
         groups = group_set - cls.history_group_set
 
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(5)) as session:
+        async with aiohttp.ClientSession(timeout=REQUEST_TIMEOUT) as session:
             resp = await asyncio.gather(
                 *[
                     cls._put_fireteam_data(group_data, session=session)
