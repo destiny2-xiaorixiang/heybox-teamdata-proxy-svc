@@ -214,8 +214,7 @@ class FireteamHelper:
     async def _put_fireteam_data(
         cls, group_data: GroupData, *, session: aiohttp.ClientSession
     ):
-        await cls.semaphore.acquire()
-        try:
+        async with cls.semaphore:
             async with session.post(
                 POST_FIRETEAM_URL,
                 data=group_data.to_dict(),
