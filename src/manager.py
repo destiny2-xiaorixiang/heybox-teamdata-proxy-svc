@@ -182,7 +182,11 @@ class FireteamHelper:
         )
 
         group_set: set[GroupData] = set(
-            [i for i in chain(*data) if not isinstance(i, Exception)]
+            [
+                i
+                for i in chain(*[j for j in data if not isinstance(j, Exception)])
+                if not isinstance(i, Exception)
+            ]
         )
 
         groups = group_set - cls.history_group_set
