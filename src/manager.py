@@ -95,10 +95,7 @@ class FireteamHelper:
     @aretry(delay_seconds=0.5)
     async def fetch_fireteam_data(cls, *, offset=0) -> dict:
         proxy_data = await cls.ip_proxy_manager.get_ip_random()
-        kwargs = {}
-        if proxy_data:
-            kwargs["proxy"] = proxy_data.url_str
-        print(kwargs)
+        kwargs = {"proxy": proxy_data.url_str} if proxy_data else {}
         try:
             async with aiohttp.ClientSession(
                 headers={"Accept": "application/json, text/plain, */*"},
