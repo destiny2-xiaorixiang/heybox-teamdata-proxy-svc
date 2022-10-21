@@ -5,6 +5,7 @@ import aiohttp
 import asyncio
 import datetime
 from itertools import chain
+from loguru import logger
 
 from .util import aretry
 from .config import (
@@ -31,7 +32,7 @@ class IpProxyManager:
             try:
                 await cls.fetch_new_proxy()
             except Exception as e:
-                ...
+                logger.bind(dev=True).exception("fetch proxy error: ", e)
             await asyncio.sleep(FETCH_PROXY_RATE)
 
     @classmethod
@@ -47,16 +48,18 @@ class IpProxyManager:
                 create_time = datetime.datetime.strptime(
                     ip_data["startTime"], "%Y-%m-%d %H:%M:%S"
                 )
-                expire_time = create_time + datetime.timedelta(seconds=duration)
-                cls.pool.append(
-                    ProxyModel(
-                        ip=ip_data["ip"],
-                        port=ip_data["port"],
-                        duration=duration,
-                        create_time=create_time,
-                        expire_time=expire_time,
-                    )
+                expire_time = (
+                    create_time + datetime.timedelta(seconds=duration) - PROXY_FLEX_TIME
                 )
+                proxy = ProxyModel(
+                    ip=ip_data["ip"],
+                    port=ip_data["port"],
+                    duration=duration,
+                    create_time=create_time,
+                    expire_time=expire_time,
+                )
+                cls.pool.append(proxy)
+                logger.bind(dev=True).success("fetch new proxy, {}", proxy)
 
     @classmethod
     async def get_ip_random(cls) -> ProxyModel | None:
@@ -67,6 +70,7 @@ class IpProxyManager:
         """
         cls.pool = [proxy for proxy in cls.pool if not proxy.is_expired]
         if not cls.pool:
+            logger.bind(dev=True).warning("proxy pool is empty")
             return None
         return random.choice(cls.pool)
 
@@ -82,7 +86,7 @@ class FireteamHelper:
             try:
                 await cls.put_fireteam_data()
             except Exception as e:
-                ...
+                logger.bind(dev=True).exception("fireteam helper error", e)
             await asyncio.sleep(POST_FIRETEAM_RATE)
 
     @classmethod
@@ -106,7 +110,12 @@ class FireteamHelper:
                 ) as resp:
                     data = await resp.json()
         except Exception as e:
-            cls.ip_proxy_manager.pool.remove(proxy_data)
+            # cls.ip_proxy_manager.pool.remove(proxy_data)
+            logger.bind(dev=True).warning(
+                "fetch heybox data error, proxy_data:{proxy_data}, exception:{e}",
+                proxy_data=proxy_data,
+                e=e,
+            )
             raise e
 
         resp = []
@@ -173,6 +182,8 @@ class FireteamHelper:
 
         groups = group_set - cls.history_group_set
 
+        logger.bind(dev=True).success("fetch gather heybox data successfully")
+
         async with aiohttp.ClientSession(timeout=REQUEST_TIMEOUT) as session:
             resp = await asyncio.gather(
                 *[
@@ -210,6 +221,6 @@ class FireteamHelper:
                 status = resp["status"]
                 msg = resp["msg"]
                 if status != 200:
-                    raise ValueError("发布组队失败", status, msg, group_data)
-        finally:
-            cls.semaphore.release()
+                    e = ValueError("发布组队失败", status, msg, group_data)
+                    logger.bind(dev=True).warning("post group data fail, {}", e)
+                    raise e
