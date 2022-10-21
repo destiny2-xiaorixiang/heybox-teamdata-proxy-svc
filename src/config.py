@@ -10,7 +10,7 @@ HISTORY_EXPIRE_DURATION = datetime.timedelta(minutes=30)  # 本地内存缓存�
 OFFSET_NUM = 30  # 单次获取的长度
 OFFSET_TIMES = 3  # 获取的次数
 
-SEMAPHORE_NUM = 40
+SEMAPHORE_NUM = 10 # push时的并发数
 
 FETCH_PROXY_RATE = 10  # 获取代理的时间间隔，10s
 COUNTER_LOG_INTERVAL = 10 # 计数统计的时间间隔
