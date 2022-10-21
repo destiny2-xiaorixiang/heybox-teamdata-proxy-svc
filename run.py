@@ -2,6 +2,7 @@ import asyncio
 from pathlib import Path
 from loguru import logger
 from src.manager import FireteamHelper, IpProxyManager
+from src.counter import Counter
 
 asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
@@ -24,6 +25,7 @@ logger.add(
 
 
 if __name__ == "__main__":
+    Counter.run()
     while True:
         tasks: list[asyncio.Task] = []
         try:

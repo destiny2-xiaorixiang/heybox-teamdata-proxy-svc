@@ -7,6 +7,7 @@ import datetime
 from itertools import chain
 from loguru import logger
 
+from src.counter import Counter
 from .util import aretry
 from .config import (
     FETCH_PROXY_RATE,
@@ -175,7 +176,13 @@ class FireteamHelper:
             ],
             return_exceptions=True,
         )
-        print(round(time.time() - start_time, 2))
+        Counter.add_count(
+            "fetch_gather_heybox_data",
+            1,
+            is_time_count=True,
+            time_cost=time.time() - start_time,
+        )
+
         group_set: set[GroupData] = set(
             [i for i in chain(*data) if not isinstance(i, Exception)]
         )
@@ -193,11 +200,12 @@ class FireteamHelper:
                 return_exceptions=True,
             )
 
+        sent_set = set([data for data, value in zip(groups, resp) if not value])
+        Counter.add_count("group_data_push", len(sent_set))
+
         # 合入历史记录
         cls.clean_history_set()
-        cls.history_group_set |= set(
-            [data for data, value in zip(groups, resp) if not value]
-        )
+        cls.history_group_set |= sent_set
 
     @classmethod
     @aretry(delay_seconds=0.5)

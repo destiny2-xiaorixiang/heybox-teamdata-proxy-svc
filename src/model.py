@@ -38,3 +38,16 @@ class GroupData(BaseModel):
             "source": 3,
             "repeatid": self.user_id,
         }
+
+
+class BaseCountData(BaseModel):
+    count_name: str
+    count: int = 0
+
+
+class TimeCountData(BaseCountData):
+    time_cost: float = 0.0
+
+    @property
+    def cost_time_per_count(self) -> float:
+        return round(self.time_cost / (self.count or 1), 3)

@@ -13,4 +13,4 @@ OFFSET_TIMES = 3  # 获取的次数
 SEMAPHORE_NUM = 40
 
 FETCH_PROXY_RATE = 10  # 获取代理的时间间隔，10s
-POST_FIRETEAM_RATE = 4  # 推送新的组队信息的时间间隔，4s
+COUNTER_LOG_INTERVAL = 10 # 计数统计的时间间隔
