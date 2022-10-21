@@ -135,19 +135,19 @@ class FireteamHelper:
             create_time = team_data["create_at"]
             link_id = team_data["linkid"]
 
-            # 对于发布时间过久的任务，忽略处理
-            if create_time <= expire_time:
-                continue
-
-            resp.append(
-                GroupData(
-                    context=context,
-                    bungie_id=bungie_id,
-                    link_id=link_id,
-                    user_id=user_id,
-                    create_time=create_time,
-                )
+            group_data = GroupData(
+                context=context,
+                bungie_id=bungie_id,
+                link_id=link_id,
+                user_id=user_id,
+                create_time=create_time,
             )
+
+            # 对于发布时间过久的任务，忽略处理
+            if group_data.create_time <= expire_time:
+                continue
+            resp.append(group_data)
+
         return resp
 
     @classmethod
