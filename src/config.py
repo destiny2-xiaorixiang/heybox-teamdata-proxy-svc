@@ -7,6 +7,9 @@ POST_FIRETEAM_URL = "https://api.vforgame.com/platform/teampush"
 
 REQUEST_TIMEOUT = aiohttp.ClientTimeout(5)
 HISTORY_EXPIRE_DURATION = datetime.timedelta(minutes=30)  # 本地内存缓存的历史组队信息
+PROXY_FLEX_TIME = datetime.timedelta(seconds=10)
+
+
 OFFSET_NUM = 30  # 单次获取的长度
 OFFSET_TIMES = 3  # 获取的次数
 
@@ -14,4 +17,5 @@ SEMAPHORE_NUM = 10 # push时的并发数
 
 FETCH_PROXY_RATE = 10  # 获取代理的时间间隔，10s
 POST_FIRETEAM_RATE = 5  # 推送新的组队信息的时间间隔，4s
+
 COUNTER_LOG_INTERVAL = 10 # 计数统计的时间间隔

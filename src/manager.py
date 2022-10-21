@@ -18,6 +18,7 @@ from .config import (
     OFFSET_TIMES,
     POST_FIRETEAM_RATE,
     POST_FIRETEAM_URL,
+    PROXY_FLEX_TIME,
     REQUEST_TIMEOUT,
     SEMAPHORE_NUM,
 )
